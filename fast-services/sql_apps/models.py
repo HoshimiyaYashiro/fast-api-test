@@ -8,7 +8,7 @@ from .database import Base
 class UserDb(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[str] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
@@ -17,9 +17,7 @@ class UserDb(Base):
 class ProfileDb(Base):
     __tablename__ = "profiles"
 
-    id: Mapped[str] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
-    phone: Mapped[str] = mapped_column(nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-
+    id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=True)
+    phone: Mapped[str] = mapped_column(nullable=True)
     user: Mapped[UserDb] = relationship("UserDb")
