@@ -1,5 +1,6 @@
-fastapi
-uvicorn
-sqlalchemy
-pydantic
+fastapi~=0.109.0
+uvicorn~=0.27.0.post1
+sqlalchemy~=2.0.27
+pydantic~=2.6.0
 mysqlclient
+bcrypt~=4.1.2

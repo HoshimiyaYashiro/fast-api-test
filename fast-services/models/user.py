@@ -10,8 +10,9 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    id: int
+    id: str
     is_active: bool = True
+    profile: dict | None = None
 
     class Config:
         from_attributes = True
@@ -19,7 +20,7 @@ class User(UserBase):
 
 class ProfileBase(BaseModel):
     name: str
-    phone: str
+    phone: str | None = None
 
 
 class ProfileCreate(ProfileBase):
@@ -27,8 +28,7 @@ class ProfileCreate(ProfileBase):
 
 
 class Profile(ProfileBase):
-    id: str
-    user_id: str
+    user: User | None = None
 
     class Config:
         from_attributes = True

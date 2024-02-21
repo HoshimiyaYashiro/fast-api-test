@@ -1,21 +1,24 @@
 from fastapi import APIRouter
-from fastapi.encoders import jsonable_encoder
+from fastapi import Depends
+from sqlalchemy.orm import Session
 
+from models.base_pagination import BasePagination
 from models.user import User, UserCreate
 from models.base_response import BaseResponse
 from services import user_services
+from sql_apps import database
 
 router = APIRouter(
     prefix='/users',
-    tags=['users'],
-    responses={404: {'description': "Not found"}},
+    tags=['users']
 )
 users: list[User] = []
 
 
 @router.get('/')
-async def read_users() -> BaseResponse[list[User]]:
-    return BaseResponse.ok(users, 'Users retrieved successfully')
+async def read_users(page: int = 1, size: int = 20, db: Session = Depends(database.get_db)) -> BaseResponse[BasePagination]:
+    res_users, total = user_services.get_users(db, page, size)
+    return BaseResponse.ok(BasePagination.init(res_users, total, page, size), 'Users retrieved successfully')
 
 
 @router.get('/{user_id}')
@@ -27,7 +30,7 @@ async def read_users(user_id) -> BaseResponse[User]:
 @router.post('/')
 async def create_user(user: UserCreate) -> BaseResponse[User]:
     try:
-        res_user = user_services.create_user(user)
+        res_user, total = user_services.create_user(user)
         return BaseResponse.ok(res_user, 'User created successfully')
     except ValueError as e:
         return BaseResponse.fail(str(e), 'User creation failed')
