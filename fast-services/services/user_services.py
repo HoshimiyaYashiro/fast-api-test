@@ -1,8 +1,10 @@
+import copy
+import datetime
+
 from fastapi.encoders import jsonable_encoder
 
-from models.user import UserCreate, User, Profile, ProfileBase
+from models.user import UserCreate, User, Profile
 from sql_apps import user_cruds, database
-from sql_apps.models import UserDb
 
 
 def create_user(user: UserCreate):
@@ -18,6 +20,7 @@ def get_users(page: int = 1, size: int = 20):
     skip = page - 1 if page > 0 else 0
     with database.SessionLocal() as db:
         db_users, total = user_cruds.get_users(db, skip, size)
+    db.close()
     users = []
     for db_user in db_users:
         user = User(**jsonable_encoder(db_user))

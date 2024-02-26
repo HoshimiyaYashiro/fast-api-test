@@ -28,6 +28,7 @@ def create_user(db: Session, user: UserCreate):
     db_user.id = str(uuid.uuid4())
     db_user.password = bcrypt.hashpw(db_user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     db_user.profile = ProfileDb(name=db_user.email.split('@')[0])
+    print(jsonable_encoder(db_user))
     db.add(db_user)
     db.flush()
     db.refresh(db_user)
