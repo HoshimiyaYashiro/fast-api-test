@@ -20,7 +20,6 @@ def get_users(page: int = 1, size: int = 20):
     skip = page - 1 if page > 0 else 0
     with database.SessionLocal() as db:
         db_users, total = user_cruds.get_users(db, skip, size)
-    db.close()
     users = []
     for db_user in db_users:
         user = User(**jsonable_encoder(db_user))
@@ -28,7 +27,22 @@ def get_users(page: int = 1, size: int = 20):
     return users, total
 
 
+def get_user(user_id: str):
+    with database.SessionLocal() as db:
+        db_user = user_cruds.get_user(db, user_id)
+    return User(**jsonable_encoder(db_user)) if db_user else None
+
+
 def update_profile(user_id: str, profile: Profile):
     with database.SessionLocal() as db, db.begin():
         db_profile = user_cruds.update_profile(db, user_id, profile)
     return Profile(**jsonable_encoder(db_profile))
+
+
+def delete_user(user_id: str):
+    with database.SessionLocal() as db, db.begin():
+        db_user = user_cruds.get_user(db, user_id)
+        if not db_user:
+            raise ValueError('User not found')
+        db.delete(db_user)
+    return True

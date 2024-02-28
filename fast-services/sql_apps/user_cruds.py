@@ -10,7 +10,7 @@ import copy
 
 
 def get_user(db: Session, user_id: str):
-    return db.query(UserDb).filter(UserDb.id == user_id).first()
+    return db.get(UserDb, user_id)
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 20):
@@ -42,3 +42,12 @@ def update_profile(db: Session, user_id: str, profile: Profile):
     db.flush()
     db.refresh(db_profile)
     return copy.deepcopy(db_profile)
+
+
+def delete_user(db: Session, user_id: str):
+    db_user = db.get(UserDb, user_id)
+    print(jsonable_encoder(db_user))
+    db.delete(db_user.profile)
+    db.delete(db_user)
+    db.flush()
+    return True

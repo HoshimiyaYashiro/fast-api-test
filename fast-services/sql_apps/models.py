@@ -20,7 +20,7 @@ class UserDb(Base):
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
-    profile: Mapped['ProfileDb'] = relationship('ProfileDb', lazy='joined')
+    profile: Mapped['ProfileDb'] = relationship('ProfileDb')
     updated_at: Mapped[timestamp] = mapped_column(nullable=True)
     created_at: Mapped[timestamp] = mapped_column(nullable=True)
 
