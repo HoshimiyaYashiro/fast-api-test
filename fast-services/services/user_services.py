@@ -44,5 +44,5 @@ def delete_user(user_id: str):
         db_user = user_cruds.get_user(db, user_id)
         if not db_user:
             raise ValueError('User not found')
-        db.delete(db_user)
+        user_cruds.delete_user(db, user_id)
     return True

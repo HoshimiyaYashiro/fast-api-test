@@ -47,7 +47,6 @@ def update_profile(db: Session, user_id: str, profile: Profile):
 def delete_user(db: Session, user_id: str):
     db_user = db.get(UserDb, user_id)
     print(jsonable_encoder(db_user))
-    db.delete(db_user.profile)
     db.delete(db_user)
     db.flush()
     return True
