@@ -1,4 +1,3 @@
-# declare constants
 from enum import Enum
 
 
@@ -43,3 +42,5 @@ class CrudMessages(Enum):
     retrieve_failed = 'Retrieve operation failed'
     exists = 'Already exists'
     not_exists = 'Does not exist'
+    verified = 'Verified successfully'
+    verification_failed = 'Verification failed'

@@ -1,10 +1,12 @@
-import copy
-import datetime
+from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
 
 from models.user import UserCreate, User, Profile
+from models.login_request import EmailLoginRequest
 from sql_apps import user_cruds, database
+
+from utils import pass_helper
 
 
 def create_user(user: UserCreate):
@@ -46,3 +48,13 @@ def delete_user(user_id: str):
             raise ValueError('User not found')
         user_cruds.delete_user(db, user_id)
     return True
+
+
+def verify_user(request: EmailLoginRequest) -> Optional[User]:
+    with database.SessionLocal() as db:
+        db_user = user_cruds.get_user_by_email(db, email=request.email)
+        if not db_user:
+            raise ValueError('User not found')
+        if not pass_utils.verify_password(request.password, db_user.password):
+            raise ValueError('Invalid password')
+    return User(**jsonable_encoder(db_user))

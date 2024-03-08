@@ -9,7 +9,6 @@ router = APIRouter(
     prefix='/users',
     tags=['users']
 )
-users: list[User] = []
 
 
 @router.get('/')
