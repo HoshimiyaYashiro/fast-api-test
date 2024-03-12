@@ -6,7 +6,7 @@ from models.user import UserCreate, User, Profile
 from models.login_request import EmailLoginRequest
 from sql_apps import user_cruds, database
 
-from utils import pass_helper
+from utils import pass_helper, jwt_helper
 
 
 def create_user(user: UserCreate):
@@ -32,6 +32,7 @@ def get_users(page: int = 1, size: int = 20):
 def get_user(user_id: str):
     with database.SessionLocal() as db:
         db_user = user_cruds.get_user(db, user_id)
+    db.close()
     return User(**jsonable_encoder(db_user)) if db_user else None
 
 
@@ -55,6 +56,8 @@ def verify_user(request: EmailLoginRequest) -> Optional[User]:
         db_user = user_cruds.get_user_by_email(db, email=request.email)
         if not db_user:
             raise ValueError('User not found')
-        if not pass_utils.verify_password(request.password, db_user.password):
+        if not pass_helper.verify_password(request.password, db_user.password):
             raise ValueError('Invalid password')
-    return User(**jsonable_encoder(db_user))
+    user = User(**jsonable_encoder(db_user))
+    print(user)
+    return jwt_helper.create_access_token(user)

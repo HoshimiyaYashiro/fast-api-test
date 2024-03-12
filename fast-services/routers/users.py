@@ -1,9 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Security
+from fastapi_jwt import JwtAuthorizationCredentials
+
 from models.base_pagination import BasePagination
 from models.user import User, UserCreate, Profile
 from models.base_response import BaseResponse
 from services import user_services
+from utils import jwt_helper
 from utils.constants import ModelMsgs, CrudMessages
+from utils.jwt_helper import access_security
 
 router = APIRouter(
     prefix='/users',
@@ -17,7 +21,7 @@ async def read_users(page: int = 1, size: int = 20) -> BaseResponse[BasePaginati
     return BaseResponse.ok(BasePagination.init(res_users, total, page, size), ModelMsgs.users_retrieved)
 
 
-@router.get('/{user_id}')
+@router.get('/user/{user_id}')
 async def read_users(user_id) -> BaseResponse[User]:
     user = user_services.get_user(user_id)
     if user:
@@ -51,3 +55,10 @@ async def delete_user(user_id) -> BaseResponse[bool]:
             return BaseResponse.ok(True, CrudMessages.deleted.value)
     except ValueError as e:
         return BaseResponse.fail(str(e), CrudMessages.delete_failed.value)
+
+
+@router.get('/me')
+async def read_me(credentials: JwtAuthorizationCredentials = Security(access_security)) -> BaseResponse[User]:
+    auth_user = jwt_helper.get_user_from_token(credentials)
+    user = user_services.get_user(auth_user.id)
+    return BaseResponse.ok(user, CrudMessages.retrieved.value)

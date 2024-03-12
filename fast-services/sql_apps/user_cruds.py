@@ -25,7 +25,7 @@ def get_user_by_email(db: Session, email: str):
 def create_user(db: Session, user: UserCreate):
     db_user = UserDb(**user.dict())
     db_user.id = str(uuid.uuid4())
-    db_user.password = pass_utils.get_hashed_password(user.password)
+    db_user.password = pass_helper.get_hashed_password(user.password)
     db_user.profile = ProfileDb(name=db_user.email.split('@')[0])
     print(jsonable_encoder(db_user))
     db.add(db_user)

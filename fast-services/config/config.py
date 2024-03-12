@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -20,6 +20,7 @@ class Settings(BaseSettings):
         env_prefix = 'APP_'
         env_file = '.env'
         env_file_encoding = 'utf-8'
+        extra = 'ignore'
 
 
 settings = Settings()

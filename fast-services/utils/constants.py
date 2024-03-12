@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 models = {
     'user': 'user',
     'users': 'users',

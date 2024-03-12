@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 SQLALCHEMY_DATABASE_URL = 'mysql+pymysql://root:admin@localhost:3306/fastapi'
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 
 SessionLocal = sessionmaker(bind=engine)
 
