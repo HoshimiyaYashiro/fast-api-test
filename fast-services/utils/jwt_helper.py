@@ -11,9 +11,7 @@ REFRESH_EXPIRES_DELTA = timedelta(hours=auth.settings.REFRESH_EXPIRES_DELTA)
 access_security = JwtAccessBearer(secret_key=auth.settings.SECRET_KEY, auto_error=True,
                                   access_expires_delta=EXPIRES_DELTA,
                                   refresh_expires_delta=REFRESH_EXPIRES_DELTA)
-refresh_security = JwtRefreshBearer(secret_key=auth.settings.SECRET_KEY, auto_error=True,
-                                    access_expires_delta=EXPIRES_DELTA,
-                                    refresh_expires_delta=REFRESH_EXPIRES_DELTA)
+refresh_security = JwtRefreshBearer.from_other(access_security)
 
 
 def create_access_token(user: User):
@@ -32,3 +30,8 @@ def refresh(credentials: JwtAuthorizationCredentials):
 
 def get_user_from_token(credentials: JwtAuthorizationCredentials) -> User:
     return User(**credentials.subject)
+
+
+def get_credentials_from_token(token: str) -> JwtAuthorizationCredentials:
+    credentials = access_security._decode(token)
+    return JwtAuthorizationCredentials(subject=credentials['subject'], jti=credentials['jti'])
